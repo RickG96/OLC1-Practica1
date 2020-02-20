@@ -151,8 +151,7 @@ public class Analizador {
                     sbToken.append(lineaActual[j]);
                 }
                 
-                if(sbToken.toString().replace(" ", "").equals("->") || (sbToken.toString().replace(" ", "").equals(":") && contadorComillas == 0)){
-                    //System.out.println(sbToken.toString());
+                if(sbToken.toString().replace(" ", "").equals("->") || (sbToken.toString().replace(" ", "").equals(":") && contadorComillas == 0)) {
                     sbToken.delete(0, sbToken.length());
                 }
             }
@@ -163,7 +162,7 @@ public class Analizador {
                 Interfaz.consola.append(nuevo.nombre + " " + nuevo.cadena + "\n");
             } else if(!conj && !lex) {
                 expr.setExpresion(sbToken.toString());
-                System.out.println(expr.nombre + " -- " + expr.expresion);
+                System.out.println(expr.nombre + ": " + expr.expresion);
                 this.expresiones.add(expr);
             } else if(lex) {
                 lexema.setCadena(sbToken.toString().replace("\"", ""));
