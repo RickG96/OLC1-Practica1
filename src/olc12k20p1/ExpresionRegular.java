@@ -141,10 +141,7 @@ public class ExpresionRegular {
         a.tablaSiguientes(a.getRaiz());
         a.agregarSiguientes(a.getRaiz());
         a.eliminarSiguientesDuplicados();
-        //System.out.println(a.tabla.filas.size() + "");
-        for(int i = 0; i < a.tabla.filas.size(); i++) {
-            System.out.println(a.tabla.filas.get(i).getHoja() + " " + a.tabla.filas.get(i).getNumero() + " " + a.tabla.filas.get(i).getSiguientes().toString());
-        }
+        a.dibujarTablaSiguientes();
     }
     
 }

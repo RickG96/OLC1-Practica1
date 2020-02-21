@@ -65,7 +65,7 @@ public class Arbol {
         try {
             int max = 999;
             int min = 1;
-            this.contador =(int)(Math.random() * (max - min + 1));
+            this.contador = (int)(Math.random() * (max - min + 1));
             PrintWriter doc = new PrintWriter("arbol" + this.contador + ".txt", "UTF-8");
             doc.println("digraph g {\n \n");
             crearNodos(nodo, true);
@@ -214,6 +214,30 @@ public class Arbol {
             Set<Integer> hashSet = new HashSet<Integer>(this.tabla.filas.get(i).getSiguientes());
             this.tabla.filas.get(i).getSiguientes().clear();
             this.tabla.filas.get(i).siguientes.addAll(hashSet);
+        }
+    }
+    
+    public void dibujarTablaSiguientes() {
+        try {
+            int max = 999;
+            int min = 1;
+            this.contador = (int)(Math.random() * (max - min + 1));
+            PrintWriter doc = new PrintWriter("siguientes" + this.contador + ".txt", "UTF-8");
+            doc.println("digraph g {\n\n");
+            doc.println("aHtmlTable [\nshape=plaintext\ncolor=coral1\nlabel=<\n\n");
+            doc.println("<table border='1' cellborder='1'>");
+            for(int i = 0; i < this.tabla.getSiguientes().size(); i++) {
+                doc.println("<tr><td>" + this.tabla.getSiguientes().get(i).getHoja() + "</td><td>" + 
+                        this.tabla.getSiguientes().get(i).getNumero() + "</td><td>" + 
+                        this.tabla.getSiguientes().get(i).getSiguientes().toString() + "</td></tr>");
+            }
+            doc.println("</table>\n");
+            doc.println(">];\n");
+            doc.println("}");
+            doc.close();
+            Process p = Runtime.getRuntime().exec("dot -Tpng siguientes" + this.contador + ".txt -o siguientes" + this.contador + ".png");
+        } catch(Exception e) {
+            System.err.println(e.toString());
         }
     }
     
