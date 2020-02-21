@@ -158,15 +158,15 @@ public class Analizador {
             if(conj) {
                 nuevo.setCadena(sbToken.toString().replace(" ", ""));
                 this.conjuntos.add(nuevo);
-                System.out.println(nuevo.nombre + ": " + nuevo.caracteres.toString());
-                Interfaz.consola.append(nuevo.nombre + " " + nuevo.cadena + "\n");
+                //System.out.println(nuevo.nombre + ": " + nuevo.caracteres.toString());
+                Interfaz.consola.append("Nuevo conjunto --> " + nuevo.nombre + " " + nuevo.cadena + "\n");
             } else if(!conj && !lex) {
                 expr.setExpresion(sbToken.toString());
-                System.out.println(expr.nombre + ": " + expr.expresion);
+                Interfaz.consola.append("Nueva expresion regular -->" + expr.nombre + ": " + expr.expresion + "\n");
                 this.expresiones.add(expr);
             } else if(lex) {
                 lexema.setCadena(sbToken.toString().replace("\"", ""));
-                System.out.println(lexema.nombre + ": " + lexema.cadena);
+                Interfaz.consola.append("Nuevo lexema --> " + lexema.nombre + ": " + lexema.cadena + "\n");
             }
             conj = false;
             sbToken.delete(0, sbToken.length());

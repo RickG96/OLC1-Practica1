@@ -119,6 +119,32 @@ public class ExpresionRegular {
         System.out.print("");
         this.arbolito.setRaiz(pila2.pop());
         this.arbolito.dibujar(this.arbolito.getRaiz());
+        
+        // insertar en la raiz un and y en la derecha de la raiz un # de tipo raiz
+        Arbol a = new Arbol();
+        NodoArbol extra = new NodoArbol();
+        extra.setId("node100");
+        extra.setTipo("and");
+        extra.setValor(".");
+        NodoArbol f = new NodoArbol();
+        f.setId("node99");
+        f.setTipo("final");
+        f.setValor("#");
+        extra.setDerecho(f);
+        extra.setIzquierdo(this.arbolito.getRaiz());
+        a.setRaiz(extra);
+        //a.dibujar(a.getRaiz());
+        a.hojas = 0;
+        a.metodoArbol(a.getRaiz(), 0);
+        a.hojas = 0;
+        // hasta aqui todo bien todo correcto
+        a.tablaSiguientes(a.getRaiz());
+        a.agregarSiguientes(a.getRaiz());
+        a.eliminarSiguientesDuplicados();
+        //System.out.println(a.tabla.filas.size() + "");
+        for(int i = 0; i < a.tabla.filas.size(); i++) {
+            System.out.println(a.tabla.filas.get(i).getHoja() + " " + a.tabla.filas.get(i).getNumero() + " " + a.tabla.filas.get(i).getSiguientes().toString());
+        }
     }
     
 }
