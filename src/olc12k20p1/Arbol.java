@@ -6,6 +6,7 @@
 package olc12k20p1;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,11 +20,13 @@ public class Arbol {
     String strArbol;
     int contador;
     TablaSiguientes tabla;
+    TablaTransiciones transiciones;
     
     public Arbol() {
         this.raiz = null;
         this.strArbol = "";
         this.tabla = new TablaSiguientes();
+        this.transiciones = new TablaTransiciones();
     }
 
     public NodoArbol getRaiz() {
@@ -75,6 +78,7 @@ public class Arbol {
             doc.println("}");
             doc.close();
             Process p = Runtime.getRuntime().exec("dot -Tpng arbol" + this.contador + ".txt -o arbol" + this.contador + ".png");
+            Interfaz.consola.append("Se ha creado la imagen: arbol" + this.contador + ".png \n\n");
             this.strArbol = "";
         } catch(Exception e) {
             System.err.println(e.toString());
@@ -236,9 +240,116 @@ public class Arbol {
             doc.println("}");
             doc.close();
             Process p = Runtime.getRuntime().exec("dot -Tpng siguientes" + this.contador + ".txt -o siguientes" + this.contador + ".png");
+            Interfaz.consola.append("Se ha creado la imagen: siguientes" + this.contador + ".png \n\n");
         } catch(Exception e) {
             System.err.println(e.toString());
         }
+    }
+    
+    public void agregarEstados(NodoArbol nodo) {
+        //Hasr un array list con un vector de ints, luego eliminar los duplicados, y por ultimo crear los estados
+        ArrayList<ArrayList<Integer>> lista = new ArrayList();
+        lista.add(nodo.primeros);
+        for(int i = 0; i < this.tabla.getSiguientes().size(); i++) {
+            if(!this.tabla.getSiguientes().get(i).getSiguientes().isEmpty())
+                lista.add(this.tabla.getSiguientes().get(i).getSiguientes());
+        }
+        
+        Set<ArrayList<Integer>> hsSet = new HashSet<ArrayList<Integer>>(lista);
+        lista.clear();
+        lista.addAll(hsSet);
+        
+        ArrayList<String> listColum = new ArrayList();
+        for(int i = 0; i < this.tabla.getSiguientes().size() - 1; i++) {
+            listColum.add(this.tabla.getSiguientes().get(i).getHoja());
+        }
+        Set<String> strCol = new HashSet<String>(listColum);
+        listColum.clear();
+        listColum.addAll(strCol);
+        
+        FilaTransiciones n = new FilaTransiciones();
+        n.setEstado("Estado");
+        n.irs = "-";
+        for(int i = 0; i < listColum.size(); i++) {
+            n.sigEstado.add(listColum.get(i));
+        }
+        this.transiciones.filaTrans.add(n);
+        for(int i = 0; i < lista.size(); i++) {
+            FilaTransiciones nueva = new FilaTransiciones();
+            nueva.setEstado("S" + i);
+            nueva.irs = lista.get(i).toString();
+            this.transiciones.filaTrans.add(nueva);
+            for(int j = 0; j < n.sigEstado.size(); j++) {
+                nueva.sigEstado.add("-");
+            }
+        }
+        
+        for(int i = 1; i < this.transiciones.filaTrans.size(); i++) {
+            String aux = this.transiciones.filaTrans.get(i).irs.replace("[", "").replace("]", "").replace(" ", "");
+            String aux2[] = aux.split(",");
+            //System.out.println(aux2.toString());
+            for(int j = 0; j < aux2.length; j++) {
+                for(int k = 0; k < this.tabla.getSiguientes().size(); k++) {
+                    int nFilaSig = Integer.parseInt(aux2[j]);
+                    String auxNombreHoja;
+                    String auxSigHoja; // buscar en tabla de transiciones el nombre del estado segun los siguientes
+                    int lugarColumna;
+                    if(nFilaSig == this.tabla.getSiguientes().get(k).getNumero()) {
+                        auxNombreHoja = this.tabla.getSiguientes().get(k).getHoja();// con este buscamos en la tabla de transiciones el lugar de la columna en el que lo insertaremos
+                        auxSigHoja = this.tabla.getSiguientes().get(k).getSiguientes().toString();
+                        for(int x = 1; x < this.transiciones.filaTrans.size(); x++) {
+                            if(this.transiciones.filaTrans.get(x).irs.equals(auxSigHoja)) {
+                                auxSigHoja = this.transiciones.filaTrans.get(x).estado;
+                                break;
+                            }
+                        }
+                        for(int y = 0; y < this.transiciones.filaTrans.get(0).sigEstado.size(); y++) {
+                            if(this.transiciones.filaTrans.get(0).sigEstado.get(y).equals(auxNombreHoja)) {
+                                this.transiciones.filaTrans.get(i).sigEstado.set(y, auxSigHoja);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(int i = 0; i < this.transiciones.filaTrans.size(); i++) {
+            System.out.println(this.transiciones.filaTrans.get(i).estado + " -- " +
+                    this.transiciones.filaTrans.get(i).irs + 
+                    this.transiciones.filaTrans.get(i).sigEstado.toString());
+        }
+        
+        try {
+            int max = 999;
+            int min = 1;
+            this.contador = (int)(Math.random() * (max - min + 1));
+            PrintWriter doc = new PrintWriter("transiciones" + this.contador + ".txt", "UTF-8");
+            doc.println("digraph g {\n\n");
+            doc.println("aHtmlTable [\nshape=plaintext\ncolor=deeppink4\nlabel=<\n\n");
+            doc.println("<table border='1' cellborder='1'>");
+            String aux = "";
+            for(int i = 0; i < this.transiciones.filaTrans.get(0).sigEstado.size(); i++) {
+                aux += "<td>" + this.transiciones.filaTrans.get(0).sigEstado.get(i) + "</td>";
+            }
+            doc.print("<tr><td>" + this.transiciones.filaTrans.get(0).estado + "</td><td> - </td>" + aux + "</tr>");
+            aux = "";
+            for(int i = 1; i < this.transiciones.filaTrans.size(); i++) {
+                for(int x = 0; x < this.transiciones.filaTrans.get(0).sigEstado.size(); x++) {
+                    aux += "<td>" + this.transiciones.filaTrans.get(i).sigEstado.get(x) + "</td>";
+                }
+                doc.print("<tr><td>" + this.transiciones.filaTrans.get(i).estado + "</td><td>"+ this.transiciones.filaTrans.get(i).irs + "</td>" + aux + "</tr>");
+                aux = "";
+            }
+            doc.println("</table>\n");
+            doc.println(">];\n");
+            doc.println("}");
+            doc.close();
+            Process p = Runtime.getRuntime().exec("dot -Tpng transiciones" + this.contador + ".txt -o transiciones" + this.contador + ".png");
+            Interfaz.consola.append("Se ha creado la imagen: transiciones" + this.contador + ".png \n\n");
+        } catch(Exception e) {
+            
+        }
+        
     }
     
 }

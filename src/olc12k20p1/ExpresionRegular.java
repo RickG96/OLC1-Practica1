@@ -133,15 +133,15 @@ public class ExpresionRegular {
         extra.setDerecho(f);
         extra.setIzquierdo(this.arbolito.getRaiz());
         a.setRaiz(extra);
-        //a.dibujar(a.getRaiz());
         a.hojas = 0;
         a.metodoArbol(a.getRaiz(), 0);
         a.hojas = 0;
-        // hasta aqui todo bien todo correcto
         a.tablaSiguientes(a.getRaiz());
         a.agregarSiguientes(a.getRaiz());
         a.eliminarSiguientesDuplicados();
         a.dibujarTablaSiguientes();
+        // hasta aqui todo bien todo correcto
+        a.agregarEstados(a.getRaiz());
     }
     
 }
